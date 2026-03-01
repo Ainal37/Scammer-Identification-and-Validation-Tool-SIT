@@ -1,0 +1,18 @@
+# FastAPI backend
+fastapi>=0.115.0
+reportlab>=4.0.0
+uvicorn[standard]>=0.32.0
+sqlalchemy>=2.0.0
+pymysql>=1.1.0
+python-dotenv>=1.0.0
+pyotp>=2.9.0
+python-jose[cryptography]>=3.3.0
+bcrypt>=4.0.0
+pydantic>=2.0.0
+requests>=2.32.0
+python-multipart>=0.0.9
+apscheduler>=3.10.0
+pyzipper>=0.3.6
+
+# Telegram bot (shared)
+pyTelegramBotAPI==4.25.0

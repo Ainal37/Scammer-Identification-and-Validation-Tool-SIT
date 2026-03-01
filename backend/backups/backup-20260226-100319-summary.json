@@ -1,0 +1,65 @@
+{
+  "backup_id": 3,
+  "created_at": "2026-02-26T10:03:19.917948+00:00",
+  "db_type": "mysql",
+  "db_name": "sit_db",
+  "dump_file_name": "dump.sql",
+  "zip_file_name": "backup-20260226-100319.zip",
+  "size_bytes": 4055,
+  "checksum_sha256": "75959a368ba91f51362b46191be4c3f0818cb1af87fbd71555d1b26548d235c9",
+  "tables": [
+    {
+      "name": "admin_users",
+      "row_count": 3
+    },
+    {
+      "name": "user_security",
+      "row_count": 2
+    },
+    {
+      "name": "scans",
+      "row_count": 5
+    },
+    {
+      "name": "reports",
+      "row_count": 0
+    },
+    {
+      "name": "audit_logs",
+      "row_count": 73
+    },
+    {
+      "name": "system_settings",
+      "row_count": 8
+    },
+    {
+      "name": "notifications",
+      "row_count": 0
+    },
+    {
+      "name": "users",
+      "row_count": 0
+    },
+    {
+      "name": "backups",
+      "row_count": 0
+    },
+    {
+      "name": "backup_history",
+      "row_count": 3
+    }
+  ],
+  "key_tables_highlight": {
+    "admin_users": 3,
+    "user_security": 2,
+    "scans": 5,
+    "reports": 0,
+    "audit_logs": 73,
+    "system_settings": 8
+  },
+  "retention_days": 7,
+  "backup_type": "db_only",
+  "status": "success",
+  "error_message": null,
+  "encrypted": false
+}

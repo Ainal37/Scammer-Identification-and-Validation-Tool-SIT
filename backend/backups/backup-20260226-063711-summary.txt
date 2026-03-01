@@ -1,0 +1,39 @@
+============================================================
+SIT-System Backup Summary Report
+============================================================
+
+Generated: 2026-02-26T06:37:11.405926+00:00
+Backup ID: 1
+Database: sit_db (MySQL)
+Backup type: db_only
+Zip file: backup-20260226-063711.zip
+Size: 2352 bytes
+SHA-256: 20e78cff49c1965558d877e65cac8b5b6961894d4898ac778d6f082789305142
+Encrypted: No
+Retention: 7 days
+
+============================================================
+What is backed up
+============================================================
+
+1) Accounts & Security: admin_users, user_security
+2) SIT Core Data: scans, reports
+3) System Config & Audit: system_settings, audit_logs
+4) Other tables: notifications, users, backups, backup_history
+
+============================================================
+Row counts per table
+============================================================
+
+  admin_users: 2 rows
+  user_security: 1 rows
+  scans: 0 rows
+  reports: 0 rows
+  audit_logs: 0 rows
+  system_settings: 7 rows
+  notifications: 0 rows
+  users: 0 rows
+  backups: 0 rows
+  backup_history: 0 rows
+
+Generated at: 2026-02-26T06:37:11.405926+00:00

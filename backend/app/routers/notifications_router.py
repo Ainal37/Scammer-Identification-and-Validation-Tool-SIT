@@ -3,7 +3,7 @@
 from typing import Optional, List
 from fastapi import APIRouter, Depends, Query, HTTPException, Request, Body
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, func
+from sqlalchemy import func
 
 from ..database import get_db
 from ..models import Notification, AuditLog
@@ -15,10 +15,8 @@ router = APIRouter(prefix="/notifications", tags=["notifications"])
 
 
 def _scope_filter(q, admin):
-    return q.filter(or_(
-        Notification.recipient_scope == "all",
-        Notification.recipient_scope == admin.role,
-    ))
+    """Single-admin: return all notifications (admin sees everything)."""
+    return q
 
 
 def _request_meta(request: Request):
@@ -78,13 +76,7 @@ def get_unread_count(
     db: Session = Depends(get_db),
     admin=Depends(get_current_admin),
 ):
-    q = db.query(func.count(Notification.id)).filter(
-        or_(
-            Notification.recipient_scope == "all",
-            Notification.recipient_scope == admin.role,
-        ),
-        Notification.is_read == False,
-    )
+    q = db.query(func.count(Notification.id)).filter(Notification.is_read == False)
     cnt = q.scalar() or 0
     return {"unread_count": cnt}
 
@@ -100,25 +92,19 @@ def mark_notifications_read(
     ids = ids or []
     if ids:
         q = db.query(Notification).filter(Notification.id.in_(ids))
-        q = _scope_filter(q, admin)
         q.update({Notification.is_read: True}, synchronize_session=False)
         target = ",".join(f"notification_id={i}" for i in ids[:5])
         if len(ids) > 5:
             target += f",+{len(ids) - 5} more"
     else:
-        q = db.query(Notification).filter(
-            or_(
-                Notification.recipient_scope == "all",
-                Notification.recipient_scope == admin.role,
-            ),
-            Notification.is_read == False,
+        db.query(Notification).filter(Notification.is_read == False).update(
+            {Notification.is_read: True}, synchronize_session=False
         )
-        q.update({Notification.is_read: True}, synchronize_session=False)
         target = "mark_all"
     db.commit()
     db.add(AuditLog(
         actor_email=admin.email,
-        action="MARK_NOTIFICATIONS_READ",
+        action="MARK_READ" if ids else "MARK_ALL_READ",
         target=target,
         ip_address=ip,
         user_agent=ua,
@@ -134,23 +120,19 @@ def mark_all_read(
     admin=Depends(get_current_admin),
 ):
     ip, ua = _request_meta(request)
-    db.query(Notification).filter(
-        or_(
-            Notification.recipient_scope == "all",
-            Notification.recipient_scope == admin.role,
-        ),
-        Notification.is_read == False,
-    ).update({Notification.is_read: True}, synchronize_session=False)
+    db.query(Notification).filter(Notification.is_read == False).update(
+        {Notification.is_read: True}, synchronize_session=False
+    )
     db.commit()
     db.add(AuditLog(
         actor_email=admin.email,
-        action="MARK_NOTIFICATIONS_READ",
+        action="MARK_ALL_READ",
         target="mark_all",
         ip_address=ip,
         user_agent=ua,
     ))
     db.commit()
-    return {"ok": True}
+    return {"ok": True, "unread_count": 0}
 
 
 @router.post("/{notification_id}/mark-read")
@@ -161,7 +143,6 @@ def mark_one_read(
     admin=Depends(get_current_admin),
 ):
     q = db.query(Notification).filter(Notification.id == notification_id)
-    q = _scope_filter(q, admin)
     n = q.first()
     if not n:
         raise HTTPException(status_code=404, detail="Notification not found")
@@ -170,7 +151,7 @@ def mark_one_read(
     ip, ua = _request_meta(request)
     db.add(AuditLog(
         actor_email=admin.email,
-        action="MARK_NOTIFICATIONS_READ",
+        action="MARK_READ",
         target=f"notification_id={notification_id}",
         ip_address=ip,
         user_agent=ua,

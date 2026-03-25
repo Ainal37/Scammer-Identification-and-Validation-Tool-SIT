@@ -220,11 +220,14 @@ async function updateUser(id, payload) { var r = await authFetch("/users/" + id,
 async function listNotifications(unreadOnly, limit) {
   var q = "?unread_only=" + (unreadOnly ? "true" : "false") + "&limit=" + (limit || 20);
   var r = await authFetch("/notifications" + q);
-  return r ? r.json() : [];
+  if (!r || !r.ok) throw new Error("Notifications API failed");
+  var list = await r.json();
+  return Array.isArray(list) ? list : [];
 }
 async function getUnreadCount() {
   var r = await authFetch("/notifications/unread-count");
-  return r ? r.json() : null;
+  if (!r || !r.ok) return null;
+  return r.json();
 }
 async function createNotification(payload) { var r = await authFetch("/notifications", { method: "POST", body: JSON.stringify(payload) }); return r ? r.json() : null; }
 async function markNotificationsRead(ids) {
@@ -352,18 +355,77 @@ function toggleNotifDropdown() {
   if (!dd) return;
   _notifDropdownOpen = !_notifDropdownOpen;
   dd.classList.toggle("show", _notifDropdownOpen);
-  if (_notifDropdownOpen) loadNotifDropdown();
+  if (_notifDropdownOpen) {
+    _ensureNotifSendForm(dd);
+    loadNotifDropdown();
+  }
+}
+
+function _ensureNotifSendForm(dd) {
+  if (document.getElementById("notifSendForm")) return;
+  var header = dd.querySelector(".notif-dropdown-header");
+  if (!header) return;
+  var btns = header.querySelectorAll("button");
+  if (btns.length > 0) {
+    var sendBtn = document.createElement("button");
+    sendBtn.className = "btn btn-sm";
+    sendBtn.textContent = "Send";
+    sendBtn.onclick = toggleNotifSendForm;
+    header.insertBefore(sendBtn, btns[0]);
+  }
+  var form = document.createElement("div");
+  form.id = "notifSendForm";
+  form.className = "notif-send-form";
+  form.style.cssText = "display:none;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg-2)";
+  form.innerHTML = '<div class="form-group" style="margin-bottom:8px"><input type="text" id="nsf_title" placeholder="Title" style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-1)" /></div>' +
+    '<div class="form-group" style="margin-bottom:8px"><select id="nsf_type" style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-1)"><option value="info">Info</option><option value="warning">Warning</option><option value="alert">Alert</option><option value="success">Success</option></select></div>' +
+    '<div class="form-group" style="margin-bottom:8px"><textarea id="nsf_body" placeholder="Body" rows="2" style="width:100%;padding:6px 10px;resize:vertical;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-1)"></textarea></div>' +
+    '<button class="btn btn-primary btn-sm" onclick="submitNotifFromDropdown()">Send</button>';
+  var body = dd.querySelector(".notif-dropdown-body");
+  if (body) dd.insertBefore(form, body);
+}
+
+function toggleNotifSendForm() {
+  var f = document.getElementById("notifSendForm");
+  if (!f) return;
+  f.style.display = f.style.display === "none" ? "block" : "none";
+}
+
+async function submitNotifFromDropdown() {
+  var title = document.getElementById("nsf_title");
+  var body = document.getElementById("nsf_body");
+  var type = document.getElementById("nsf_type");
+  if (!title || !title.value.trim()) { showToast("Title is required", "error"); return; }
+  try {
+    var res = await createNotification({ recipient_scope: "all", type: type ? type.value : "info", title: title.value.trim(), body: (body && body.value) ? body.value.trim() : null });
+    if (res && res.id) {
+      showToast("Notification sent!", "success");
+      title.value = ""; if (body) body.value = "";
+      toggleNotifSendForm();
+      refreshNotifBadge();
+      if (_notifDropdownOpen) loadNotifDropdown();
+    } else {
+      showToast("Failed to send notification", "error");
+    }
+  } catch (e) { showToast("Error sending notification", "error"); }
 }
 
 function _renderNotifItem(n) {
   var iconClass = n.type || "info";
   var unreadClass = n.is_read ? "" : " unread";
+  var timeStr = "";
+  if (n.created_at) {
+    try {
+      var d = new Date(n.created_at);
+      timeStr = isNaN(d.getTime()) ? n.created_at : d.toLocaleString();
+    } catch (_) { timeStr = n.created_at; }
+  }
   return '<div class="notif-item' + unreadClass + '" data-id="' + n.id + '" data-read="' + (n.is_read ? "1" : "0") + '">' +
     '<div class="notif-item-icon ' + iconClass + '">' + _notifIcon(n.type) + '</div>' +
     '<div class="notif-item-content">' +
       '<div class="notif-title">' + _esc(n.title) + '</div>' +
       '<div class="notif-body">' + _esc(n.body || "") + '</div>' +
-      '<div class="notif-time">' + (n.created_at || "") + '</div>' +
+      '<div class="notif-time">' + timeStr + '</div>' +
     '</div></div>';
 }
 
@@ -373,7 +435,7 @@ async function loadNotifDropdown() {
   try {
     var list = await listNotifications(false, 20);
     if (!list || list.length === 0) {
-      body.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px">No notifications</div>';
+      body.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px">No notifications yet. Click Send above to create one.</div>';
       return;
     }
     body.innerHTML = list.slice(0, 20).map(_renderNotifItem).join("");
@@ -381,7 +443,7 @@ async function loadNotifDropdown() {
       el.addEventListener("click", function () { handleNotifItemClick(el); });
     });
   } catch (e) {
-    body.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px">Failed to load</div>';
+    body.innerHTML = '<div style="padding:20px;text-align:center;color:var(--warn);font-size:12px">Cannot reach backend</div>';
   }
 }
 
@@ -431,7 +493,13 @@ async function refreshNotifBadge() {
       _notifFirstPoll = false;
     } else if (count > _lastUnreadCount) {
       showToast("New notification", "info");
-      if (_notifDropdownOpen) loadNotifDropdown();
+      var dd = document.getElementById("notifDropdown");
+      if (dd && !_notifDropdownOpen) {
+        _notifDropdownOpen = true;
+        dd.classList.add("show");
+        _ensureNotifSendForm(dd);
+      }
+      loadNotifDropdown();
     }
     _lastUnreadCount = count;
     setNotifBadgeCount(count);

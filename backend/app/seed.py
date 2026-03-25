@@ -1,7 +1,7 @@
 """Seed default admin user and system settings on startup."""
 
 from .database import SessionLocal
-from .models import AdminUser, SystemSetting, UserSecurity
+from .models import AdminUser, SystemSetting, UserSecurity, Notification
 from .security import hash_password
 
 
@@ -70,6 +70,17 @@ def seed_admin():
                 row.value = "true"
         db.commit()
         print("[SIT] System settings seeded.")
+
+        # Seed welcome notification if none exist
+        if db.query(Notification).count() == 0:
+            db.add(Notification(
+                recipient_scope="all",
+                type="info",
+                title="Welcome to SIT Admin",
+                body="Your Scammer Identification & Validation Tool is ready. Use the bell to view and create notifications.",
+            ))
+            db.commit()
+            print("[SIT] Welcome notification seeded.")
 
     except Exception as e:
         print(f"[SIT] Seed error: {e}")

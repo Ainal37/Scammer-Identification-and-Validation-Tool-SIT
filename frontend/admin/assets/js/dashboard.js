@@ -166,30 +166,6 @@ async function doEval() {
 
 // ── Quick Action Modal Handlers ──
 
-window.submitAddUser = async function () {
-  var name = document.getElementById("mu_name").value.trim();
-  var email = document.getElementById("mu_email").value.trim();
-  var role = document.getElementById("mu_role").value;
-  var status = document.getElementById("mu_status").value;
-  if (!name || !email) { showToast("Name and email are required", "error"); return; }
-  try {
-    var res = await authFetch("/users", {
-      method: "POST",
-      body: JSON.stringify({ full_name: name, email: email, role: role, status: status }),
-    });
-    if (!res) return;
-    if (res.ok) {
-      showToast("User created!", "success");
-      closeModal("addUserModal");
-      document.getElementById("mu_name").value = "";
-      document.getElementById("mu_email").value = "";
-    } else {
-      var d = await res.json();
-      showToast(d.detail || "Failed to create user", "error");
-    }
-  } catch (e) { showToast("Error creating user", "error"); }
-};
-
 window.submitGenReport = async function () {
   var type = document.getElementById("gr_type").value;
   var desc = document.getElementById("gr_desc").value.trim();

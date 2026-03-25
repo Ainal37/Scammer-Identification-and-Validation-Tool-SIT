@@ -82,16 +82,16 @@
 
       <!-- Quick Actions -->
       <div class="quick-actions" id="quickActions">
-        <button class="quick-action-btn" onclick="openModal('addUserModal')">
-          <span class="qa-icon">&#128100;</span><span class="qa-label">Add User</span>
+        <button class="quick-action-btn" onclick="window.location.href='scans.html?quick=1'">
+          <span class="qa-icon">&#128269;</span><span class="qa-label">Quick Scan</span>
         </button>
-        <button class="quick-action-btn" onclick="openModal('genReportModal')">
+        <button class="quick-action-btn" onclick="window.location.href='reports.html'">
           <span class="qa-icon">&#128196;</span><span class="qa-label">Generate Report</span>
         </button>
-        <button class="quick-action-btn" onclick="openModal('sendNotifModal')">
-          <span class="qa-icon">&#128276;</span><span class="qa-label">Send Notification</span>
+        <button class="quick-action-btn" onclick="window.location.href='profile.html'">
+          <span class="qa-icon">&#128274;</span><span class="qa-label">Security Activity</span>
         </button>
-        <button class="quick-action-btn" onclick="openModal('backupModal')">
+        <button class="quick-action-btn" onclick="window.location.href='settings.html#backup'">
           <span class="qa-icon">&#128190;</span><span class="qa-label">Backup Data</span>
         </button>
       </div>
@@ -132,20 +132,6 @@
   </div>
 
   <!-- ===== MODALS ===== -->
-
-  <!-- Add User Modal -->
-  <div class="modal-overlay" id="addUserModal" style="display:none" onclick="if(event.target===this)closeModal('addUserModal')">
-    <div class="modal">
-      <div class="modal-header"><h2>Add New User</h2><button class="modal-close" onclick="closeModal('addUserModal')">&#10005;</button></div>
-      <div class="modal-body">
-        <div class="form-group"><label>Full Name</label><input type="text" id="mu_name" placeholder="John Doe" /></div>
-        <div class="form-group"><label>Email</label><input type="email" id="mu_email" placeholder="john@example.com" /></div>
-        <div class="form-group"><label>Role</label><select id="mu_role"><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="admin">Admin</option></select></div>
-        <div class="form-group"><label>Status</label><select id="mu_status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
-      </div>
-      <div class="modal-footer"><button class="btn" onclick="closeModal('addUserModal')">Cancel</button><button class="btn btn-primary" onclick="submitAddUser()">Create User</button></div>
-    </div>
-  </div>
 
   <!-- Generate Report Modal -->
   <div class="modal-overlay" id="genReportModal" style="display:none" onclick="if(event.target===this)closeModal('genReportModal')">

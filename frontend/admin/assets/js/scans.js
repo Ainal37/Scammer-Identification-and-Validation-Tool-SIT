@@ -69,6 +69,10 @@ document.getElementById("verdictFilter").addEventListener("change", () => { curr
 document.getElementById("prevBtn").addEventListener("click", () => { if (currentPage > 1) { currentPage--; render(); } });
 document.getElementById("nextBtn").addEventListener("click", () => { if (currentPage < Math.ceil(getFiltered().length / PER_PAGE)) { currentPage++; render(); } });
 
+if (window.location.search.includes("quick=1")) {
+  setTimeout(function () { document.getElementById("scanLink")?.focus(); }, 100);
+}
+
 // Quick Scan
 document.getElementById("scanForm").addEventListener("submit", async e => {
   e.preventDefault();

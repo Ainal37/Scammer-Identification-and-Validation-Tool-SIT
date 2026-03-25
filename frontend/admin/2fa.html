@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SIT Admin – 2FA & Security</title>
+  <script>(function(){var k="sit_theme";var t;try{t=localStorage.getItem(k)}catch(e){t=null}if(t!=="light"&&t!=="dark"){try{t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}catch(e){t="light"}}document.documentElement.setAttribute("data-theme",t||"light");})();</script>
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
@@ -18,6 +19,7 @@
       <button class="notif-bell" id="notifBell" onclick="toggleNotifDropdown()">
         &#128276;<span class="notif-badge" id="notifCount" style="display:none">0</span>
       </button>
+      <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle theme" type="button">&#9728; <span class="theme-toggle-label">Light</span></button>
       <div class="user-pill" id="userPill">
         <div class="user-avatar" id="userAvatar">A</div>
         <div class="user-pill-info">
@@ -116,6 +118,7 @@
     </div>
   </div>
 
+  <script src="assets/js/theme.js"></script>
   <script src="assets/js/api.js" id="apiScript"></script>
   <script>
     (function(){var e=document.getElementById("apiScript");e&&(e.onerror=function(){document.body.innerHTML='<div style="padding:40px;font-family:system-ui;max-width:520px;margin:40px auto;line-height:1.6"><h2 style="margin:0 0 12px 0">Cannot load application</h2><p>The frontend server (port 5500) is not running.</p><p><strong>Fix:</strong> From the project root, run:</p><pre style="background:#1e1e1e;color:#d4d4d4;padding:16px;border-radius:8px;overflow-x:auto">.\\run_all.ps1</pre><p>This starts the backend (8002), frontend (5500), and bot.</p></div>';});})();

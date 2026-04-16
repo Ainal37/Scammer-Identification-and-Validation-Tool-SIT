@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pkl
+
+# Virtual env
+backend/.venv/
+
+# Secrets
+backend/.env
+backend/bot/.env
+
+# Runtime
+backend/bot/.bot.lock
+
+# Generated PDF reports
+backend/reports/
+
+# Database backups (large, may contain sensitive data)
+backend/backups/
+
+# Evaluation output (regenerable)
+evaluation/metrics.json
+
+# IDE
+.vscode/
+.idea/
+.cursor/
+*.swp
+
+# OS
+Thumbs.db
+.DS_Store
+Desktop.ini

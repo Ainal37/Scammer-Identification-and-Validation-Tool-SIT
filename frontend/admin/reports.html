@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIT Admin – Reports</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <!-- Top Bar -->
+  <div class="topbar">
+    <button class="topbar-close" title="Close" onclick="window.close()">&#10005;</button>
+    <div class="topbar-search">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" placeholder="Search... (Ctrl+K)" id="globalSearch" onfocus="document.dispatchEvent(new KeyboardEvent('keydown',{key:'k',ctrlKey:true}))" readonly />
+    </div>
+    <div class="topbar-right">
+      <button class="notif-bell" id="notifBell" onclick="toggleNotifDropdown()">
+        &#128276;<span class="notif-badge" id="notifCount" style="display:none">0</span>
+      </button>
+      <div class="user-pill" id="userPill">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div class="user-pill-info">
+          <div class="name" id="userName">Admin</div>
+          <div class="email" id="userEmail">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Dropdown -->
+  <div class="notif-dropdown" id="notifDropdown">
+    <div class="notif-dropdown-header">
+      <h3>Notifications</h3>
+      <button class="btn btn-sm" onclick="markAllNotifRead()">Mark all read</button>
+    </div>
+    <div class="notif-dropdown-body" id="notifList"></div>
+    <div class="notif-dropdown-footer">
+      <button class="btn btn-sm" onclick="toggleNotifDropdown()">Close</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="brand">ADMIN PANEL</div>
+      <div class="brand-sub">Enterprise Dashboard</div>
+      <a href="dashboard.html"><span class="nav-icon">&#9632;</span><span>Dashboard</span></a>
+      <a href="scans.html"><span class="nav-icon">&#128269;</span><span>Scans</span></a>
+      <a href="profile.html"><span class="nav-icon">&#128101;</span><span>Admin Profile</span></a>
+      <a href="reports.html" class="active"><span class="nav-icon">&#128196;</span><span>Reports</span></a>
+      <a href="analytics.html"><span class="nav-icon">&#128200;</span><span>Analytics</span></a>
+      <a href="2fa.html"><span class="nav-icon">&#128274;</span><span>2FA & Security</span></a>
+      <a href="settings.html"><span class="nav-icon">&#9881;</span><span>Settings</span></a>
+      <div class="spacer"></div>
+      <a href="#" class="logout-btn" onclick="logout()"><span class="nav-icon">&#10140;</span><span>Logout</span></a>
+    </nav>
+
+    <div class="main">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+        <h1>Reports</h1>
+        <button class="btn btn-sm" id="viewToggle">Kanban View</button>
+      </div>
+      <div id="liveStatus" class="live-status">Last updated: -</div>
+
+      <div class="card">
+        <h2>Submit Report</h2>
+        <form id="reportForm">
+          <div class="form-group">
+            <label for="reportScanSelect">Select from recent scans</label>
+            <select id="reportScanSelect">
+              <option value="">— None —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="reportLink">Suspicious Link</label>
+            <input type="text" id="reportLink" placeholder="https://..." />
+          </div>
+          <div class="form-group">
+            <label for="reportType">Type</label>
+            <select id="reportType">
+              <option value="scam">Scam</option>
+              <option value="phishing">Phishing</option>
+              <option value="malware">Malware</option>
+              <option value="fraud">Fraud</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="reportPriority">Priority</label>
+            <select id="reportPriority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Due (SLA)</label>
+            <div id="reportDuePreview" style="font-size:12px;color:var(--text-3)">—</div>
+          </div>
+          <div class="form-group">
+            <label for="reportDescription">Description</label>
+            <textarea id="reportDescription" rows="3" placeholder="Describe the issue..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="reportResult" class="mt-2" style="display:none"></div>
+      </div>
+
+      <!-- TABLE VIEW -->
+      <div id="tableView" class="card">
+        <h2>Report History</h2>
+        <div class="toolbar">
+          <input type="text" id="searchInput" placeholder="Search by link or description..." />
+          <select id="statusFilter">
+            <option value="">All status</option>
+            <option value="new">New</option>
+            <option value="investigating">Investigating</option>
+            <option value="resolved">Resolved</option>
+          </select>
+          <select id="priorityFilter">
+            <option value="">All priority</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+          <select id="assigneeFilter">
+            <option value="">All assignee</option>
+            <option value="__unassigned__">Unassigned</option>
+          </select>
+          <span id="pageInfo" class="page-info">&mdash;</span>
+        </div>
+        <div id="bulkActionsBar" class="bulk-actions-bar" style="display:none">
+          <span id="bulkSelectedCount">0</span> selected
+          <select id="bulkAssign"><option value="">Assign to...</option><option value="__clear__">Unassigned</option></select>
+          <select id="bulkStatus"> <option value="">Set status...</option> <option value="new">New</option> <option value="investigating">Investigating</option> <option value="resolved">Resolved</option> </select>
+          <button class="btn btn-sm" id="bulkApply">Apply</button>
+          <button class="btn btn-sm" id="bulkExport">Export selected</button>
+          <button class="btn btn-sm" id="bulkClear">Clear</button>
+        </div>
+        <table>
+          <thead><tr><th><input type="checkbox" id="selectAll" title="Select all" /></th><th>ID</th><th>Scan</th><th>Link</th><th>Type</th><th>Priority</th><th>Due</th><th>Description</th><th>Status</th><th>Assignee</th><th>Action</th></tr></thead>
+          <tbody id="reportsBody"><tr><td colspan="11"><div class="skeleton skeleton-text"></div></td></tr></tbody>
+        </table>
+        <div class="pagination">
+          <button class="btn btn-sm" id="prevBtn" disabled>&laquo; Prev</button>
+          <button class="btn btn-sm" id="nextBtn" disabled>Next &raquo;</button>
+        </div>
+      </div>
+
+      <!-- KANBAN VIEW -->
+      <div id="kanbanView" style="display:none">
+        <div class="kanban-board">
+          <div class="kanban-col"><h4>New <span class="count">0</span></h4><div id="kanban-new"></div></div>
+          <div class="kanban-col"><h4>Investigating <span class="count">0</span></h4><div id="kanban-investigating"></div></div>
+          <div class="kanban-col"><h4>Resolved <span class="count">0</span></h4><div id="kanban-resolved"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/api.js" onerror="document.body.innerHTML='<div style=\"padding:40px;font-family:system-ui;max-width:520px;margin:40px auto;line-height:1.6\"><h2 style=\"margin:0 0 12px 0\">Cannot load application</h2><p>The frontend server (port 5500) is not running.</p><p><strong>Fix:</strong> From the project root, run:</p><pre style=\"background:#1e1e1e;color:#d4d4d4;padding:16px;border-radius:8px;overflow-x:auto\">.\\run_all.ps1</pre><p>This starts the backend (8002), frontend (5500), and bot.</p></div>'"></script>
+  <script src="assets/js/reports.js"></script>
+</body>
+</html>

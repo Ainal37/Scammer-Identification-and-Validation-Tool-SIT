@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="login-page">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIT Admin – Login</title>
+  <script>(function(){var k="sit_theme",t;try{t=localStorage.getItem(k)}catch(e){t=null}if(t!=="light"&&t!=="dark"){try{t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}catch(e){t="light"}}document.documentElement.setAttribute("data-theme",t||"light");})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="login-wrapper">
+    <button class="login-theme-btn" onclick="window.toggleTheme&&window.toggleTheme()" id="loginThemeBtn">&#9728; Light</button>
+    <!-- Illustration panel -->
+    <div class="login-illust">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" width="160" height="160">
+        <circle cx="100" cy="100" r="96" stroke="#374151" stroke-width="2" fill="none" opacity=".25"/>
+        <circle cx="100" cy="100" r="70" stroke="#6b7280" stroke-width="1.5" fill="none" opacity=".2"/>
+        <path d="M100 40 L140 62 V110 C140 140 100 160 100 160 C100 160 60 140 60 110 V62 Z"
+              stroke="#9ca3af" stroke-width="2.5" fill="none"/>
+        <polyline points="82,105 95,118 120,88" stroke="#d1d5db" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="30" y1="100" x2="55" y2="100" stroke="#4b5563" stroke-width="1" opacity=".3"/>
+        <line x1="145" y1="100" x2="170" y2="100" stroke="#4b5563" stroke-width="1" opacity=".3"/>
+        <line x1="100" y1="30" x2="100" y2="5" stroke="#4b5563" stroke-width="1" opacity=".3"/>
+        <circle cx="30" cy="100" r="2" fill="#6b7280" opacity=".4"/>
+        <circle cx="170" cy="100" r="2" fill="#6b7280" opacity=".4"/>
+        <circle cx="100" cy="5" r="2" fill="#6b7280" opacity=".4"/>
+      </svg>
+      <h2>Scammer Identification<br/>&amp; Validation Tool</h2>
+      <p>Enterprise threat detection platform</p>
+    </div>
+
+    <!-- Login card -->
+    <div class="login-box">
+      <h1>SIT Admin</h1>
+      <p class="subtitle">Sign in to your account</p>
+      <div id="backendStatus" class="backend-status" style="display:none;font-size:12px;margin-bottom:10px;padding:8px;border-radius:6px"></div>
+      <div id="errorMsg" class="error-msg"></div>
+
+      <!-- Step 1: Email/Password -->
+      <div id="loginStep">
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="you@company.com" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Password" required autocomplete="current-password" />
+          </div>
+          <div id="passwordHintRow" class="hint-row" style="display:none;">Password hint: <span id="passwordHintText" class="hint-value"></span></div>
+          <button type="submit" class="btn btn-primary login-submit-btn">Sign In</button>
+        </form>
+      </div>
+
+      <!-- Step 2: 2FA Code (hidden by default) -->
+      <div id="twofaSection" class="twofa-section" style="display:none">
+        <h2 style="font-size:16px;font-weight:600;margin-bottom:8px;text-align:center">Verify 2FA</h2>
+        <p style="font-size:13px;color:var(--text-2);margin-bottom:14px;text-align:center">Enter the 6-digit code from your authenticator app <em>or</em> click below to receive it via email</p>
+        <button type="button" id="sendEmailOtpBtn" class="btn" style="width:100%;margin-bottom:12px;display:none;background:var(--bg-2);color:var(--text-1);border:1px solid var(--border)">Send code via email</button>
+        <form id="twofaForm">
+          <div class="form-group">
+            <label for="twofaCode">2FA Code</label>
+            <input type="text" id="twofaCode" placeholder="000000" maxlength="6" required autocomplete="one-time-code" style="text-align:center;font-size:24px;letter-spacing:8px" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px;">Verify</button>
+        </form>
+        <p style="text-align:center;margin-top:10px"><a href="#" onclick="show2FABack()" style="font-size:12px;color:var(--text-3)">Back to login</a></p>
+      </div>
+
+      <p class="login-footer">Enterprise MVP v2.0</p>
+    </div>
+  </div>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/api.js" onerror="document.body.innerHTML='<div style=\"padding:40px;font-family:system-ui;max-width:520px;margin:40px auto;line-height:1.6\"><h2 style=\"margin:0 0 12px 0\">Cannot load application</h2><p>The frontend server (port 5500) is not running.</p><p><strong>Fix:</strong> From the project root, run:</p><pre style=\"background:#1e1e1e;color:#d4d4d4;padding:16px;border-radius:8px;overflow-x:auto\">.\\run_all.ps1</pre><p>This starts the backend (8001), frontend (5500), and bot.</p></div>'"></script>
+  <script src="assets/js/login.js"></script>
+</body>
+</html>

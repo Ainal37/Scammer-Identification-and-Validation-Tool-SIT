@@ -1,0 +1,31 @@
+message,label
+"Hey, are we still meeting for lunch tomorrow?",safe
+"The quarterly report is attached. Please review before Friday.",safe
+"Happy birthday! Hope you have a great day.",safe
+"Can you send me the project files when you get a chance?",safe
+"I'll be 10 minutes late to the meeting.",safe
+"Thanks for the update. Looks good to me.",safe
+"Let me know if you need help with the presentation.",safe
+"Great job on the client pitch today!",safe
+"The package was delivered to your address.",safe
+"Reminder: team standup at 9am tomorrow.",safe
+"Could you review this pull request when free?",safe
+"The new office wifi password is on the board.",safe
+"See you at the conference next week.",safe
+"Movie starts at 7pm. Don't be late!",safe
+"Your order has shipped and will arrive Monday.",safe
+"URGENT: Your account has been suspended! Click here to verify immediately or your account will be closed within 24 hours.",scam
+"Congratulations! You've won a $1000 gift card. Click to claim your prize now before it expires!",scam
+"Your bank account shows unauthorized activity. Login immediately to confirm your identity and secure your account.",scam
+"FINAL NOTICE: Your payment is overdue. Update your credit card information now or face legal action.",scam
+"FREE iPhone 15! You have been selected as a winner. Click here to claim your reward immediately!",scam
+"Your password has expired. Click this link to update your password now or your account will be locked.",scam
+"WARNING: Suspicious login detected on your account. Verify your identity immediately to prevent unauthorized access.",scam
+"You have a pending package delivery. Confirm your identity and pay the $2 shipping fee to receive it.",scam
+"Act fast! Limited time offer. Claim your $500 bonus by signing in to your account right now!",scam
+"ALERT: Your social security number has been compromised. Call this number immediately to verify your identity.",scam
+"Your Amazon account will be suspended within 48 hours. Click here to update your payment information urgently.",scam
+"You are the lucky winner of our lottery! Download the form and confirm your bank details to receive the cash prize.",scam
+"NOTICE: Your account has been flagged for suspicious activity. Verify now or authorities will be contacted.",scam
+"Exclusive offer just for you! Claim your free gift card bonus by clicking the link. Don't wait, offer expires soon!",scam
+"Your iCloud storage is full. Click to verify your account and get free 50GB bonus storage immediately.",scam
